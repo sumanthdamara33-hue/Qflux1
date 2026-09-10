@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qflux — Quantum Computing Circuit Simulator & Analysis Studio</title>
+  <meta name="description" content="Browser-native quantum circuit simulator with exact statevector math, 3D Bloch sphere, and OpenQASM export.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+  <!-- Global Header -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">Qflux</span>
+        <span class="brand-tagline">Quantum Circuit Simulator</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html" class="active">Overview</a></li>
+          <li><a href="simulator.html">Simulator Studio</a></li>
+          <li><a href="algorithms.html">Algorithms Lab</a></li>
+          <li><a href="docs.html">Documentation</a></li>
+          <li><a href="simulator.html" class="btn btn-primary btn-sm">Launch Studio ↗</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero with Particle Canvas -->
+  <section class="hero">
+    <canvas id="particleCanvas"></canvas>
+    <div class="hero-inner">
+      <div class="container hero-grid">
+        <div>
+          <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Browser-Native · No Install · Real-time</div>
+          <h1 class="hero-title">Simulate quantum<br><span class="gradient-text">circuits in real&#x2011;time.</span></h1>
+          <p class="hero-desc">Qflux is a full-featured quantum circuit IDE running entirely in your browser. Build circuits, compute exact complex statevectors, explore 3D Bloch sphere projections, and export runnable OpenQASM &amp; Qiskit code.</p>
+          <div class="hero-actions">
+            <a href="simulator.html" class="btn-glow">⚡ Launch Quantum Studio</a>
+            <a href="algorithms.html" class="btn-ghost">Explore Algorithms →</a>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="hero-stat-val" data-count="64">0</div><div class="hero-stat-label">Max States (2⁶)</div></div>
+            <div class="hero-stat"><div class="hero-stat-val" data-count="9">0</div><div class="hero-stat-label">Gate Types</div></div>
+            <div class="hero-stat"><div class="hero-stat-val" data-count="6">0</div><div class="hero-stat-label">Presets</div></div>
+            <div class="hero-stat"><div class="hero-stat-val" data-count="100">0</div><div class="hero-stat-label">% Client-Side</div></div>
+          </div>
+        </div>
+        <div class="hero-teaser-card">
+          <div class="teaser-header">
+            <div style="font-size:0.88rem;font-weight:700;color:var(--text-primary)"><span class="teaser-live-dot"></span> Live State Evaluator</div>
+            <span class="badge badge-indigo" id="teaserPresetName">Bell State</span>
+          </div>
+          <div class="circuit-mini"><svg id="miniCircuitSvg" class="circuit-mini-svg" height="80" viewBox="0 0 320 80"></svg></div>
+          <div style="background:var(--bg-deep);border:1px solid var(--border-subtle);border-radius:6px;padding:10px 12px;margin-bottom:14px">
+            <div style="font-size:0.7rem;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:4px">State Vector</div>
+            <div id="teaserKet" style="font-family:var(--font-mono);font-size:0.85rem;color:var(--accent-cyan);overflow-x:auto"></div>
+          </div>
+          <div style="font-size:0.72rem;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:8px">Measurement Probabilities</div>
+          <div id="teaserBars" style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px"></div>
+          <div style="display:flex;gap:6px;margin-bottom:14px">
+            <button class="btn btn-secondary btn-sm" style="flex:1" onclick="setTeaser('bell')">Bell</button>
+            <button class="btn btn-secondary btn-sm" style="flex:1" onclick="setTeaser('ghz')">GHZ</button>
+            <button class="btn btn-secondary btn-sm" style="flex:1" onclick="setTeaser('superposition')">|+++⟩</button>
+            <button class="btn btn-secondary btn-sm" style="flex:1" onclick="setTeaser('grover')">Grover</button>
+          </div>
+          <a href="simulator.html?preset=bell" id="teaserStudioLink" class="btn btn-primary" style="width:100%;justify-content:center">Open in Full Studio ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticker -->
+  <div class="tech-ticker"><div class="tech-ticker-inner" id="tickerInner"></div></div>
+
+  <!-- Features -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-header" style="text-align:center;max-width:600px;margin:0 auto">
+        <div class="section-tag">Core Capabilities</div>
+        <h2 class="section-title">Engineered for Quantum Exploration</h2>
+        <p class="section-subtitle">A complete toolset for quantum education, research, and experimentation — no installation needed.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card" data-color="indigo"><div class="feature-icon fi-indigo">⚛️</div><h3 class="feature-title">Exact Statevector Math</h3><p class="feature-desc">Double-precision complex-number 2ᴺ-dimensional simulation. Every gate is a mathematically exact unitary multiplication — no approximations.</p></div>
+        <div class="feature-card" data-color="cyan"><div class="feature-icon fi-cyan">🌐</div><h3 class="feature-title">Interactive 3D Bloch Sphere</h3><p class="feature-desc">Drag-to-rotate 3D canvas renders qubit state with expectation values ⟨X⟩, ⟨Y⟩, ⟨Z⟩ and purity computed in real time.</p></div>
+        <div class="feature-card" data-color="emerald"><div class="feature-icon fi-emerald">🎲</div><h3 class="feature-title">Monte Carlo Sampling</h3><p class="feature-desc">Sample measurement shots using Born-rule probabilities. Results visualized as an animated histogram with per-state counts and percentages.</p></div>
+        <div class="feature-card" data-color="violet"><div class="feature-icon fi-violet">💻</div><h3 class="feature-title">Code Synthesis</h3><p class="feature-desc">Auto-generates valid OpenQASM 2.0 and executable Python Qiskit scripts from your visual circuit — ready to run on real QPUs.</p></div>
+        <div class="feature-card" data-color="indigo"><div class="feature-icon fi-indigo">↩</div><h3 class="feature-title">Full Undo / Redo</h3><p class="feature-desc">Complete 40-step edit history with Ctrl+Z / Ctrl+Y keyboard shortcuts. Right-click any gate to instantly remove it.</p></div>
+        <div class="feature-card" data-color="cyan"><div class="feature-icon fi-cyan">🔌</div><h3 class="feature-title">9 Gate Types</h3><p class="feature-desc">H, X, Y, Z, S, T single-qubit gates plus CX (CNOT), CZ, and Measurement. Visual connector lines for multi-qubit gates.</p></div>
+        <div class="feature-card" data-color="emerald"><div class="feature-icon fi-emerald">📐</div><h3 class="feature-title">Flexible Grid</h3><p class="feature-desc">Up to 6 qubits (64-dimensional Hilbert space) × 12 time steps. Live gate count, depth, and Hilbert space dimension tracking.</p></div>
+        <div class="feature-card" data-color="violet"><div class="feature-icon fi-violet">🧪</div><h3 class="feature-title">Algorithm Presets</h3><p class="feature-desc">One-click loading of Bell State, GHZ, Quantum Teleportation, Grover's Search, Deutsch's Algorithm, and Equal Superposition.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Algorithm Highlights -->
+  <section class="preview-section">
+    <div class="container">
+      <div class="section-header" style="text-align:center;max-width:600px;margin:0 auto 48px">
+        <div class="section-tag">Algorithm Laboratory</div>
+        <h2 class="section-title">Canonical Quantum Protocols</h2>
+        <p class="section-subtitle">Deep-dive into foundational algorithms that demonstrate quantum advantage and non-locality.</p>
+      </div>
+      <div class="algo-grid">
+        <div class="algo-card"><div><div class="algo-header"><span class="badge badge-indigo">Entanglement</span><span class="algo-complexity">Depth: 2 · 2 Qubits</span></div><h3 class="algo-title">Bell State Generation</h3><p class="algo-desc">Construct maximally entangled pairs using Hadamard and CNOT gates. Demonstrates EPR correlations that violate Bell inequalities.</p><div class="algo-formula">|Φ⁺⟩ = (|00⟩ + |11⟩) / √2</div></div><div class="algo-footer"><span style="font-size:0.8rem;color:var(--text-muted)">H, CX</span><a href="simulator.html?preset=bell" class="btn btn-primary btn-sm">Launch →</a></div></div>
+        <div class="algo-card"><div><div class="algo-header"><span class="badge badge-emerald">Communication</span><span class="algo-complexity">Depth: 7 · 3 Qubits</span></div><h3 class="algo-title">Quantum Teleportation</h3><p class="algo-desc">Transfer a qubit state using a shared Bell pair + classical feedforward. Perfect state transfer without sending the physical particle.</p><div class="algo-formula">|ψ⟩ on q[0] → reconstructed on q[2]</div></div><div class="algo-footer"><span style="font-size:0.8rem;color:var(--text-muted)">H, X, CX, CZ</span><a href="simulator.html?preset=teleportation" class="btn btn-primary btn-sm">Launch →</a></div></div>
+        <div class="algo-card"><div><div class="algo-header"><span class="badge badge-indigo">Search Speedup</span><span class="algo-complexity">O(√N) vs O(N)</span></div><h3 class="algo-title">Grover's Search Algorithm</h3><p class="algo-desc">Amplify target state |11⟩ to 100% probability using oracle phase inversion + diffusion. Quadratic speedup over any classical search.</p><div class="algo-formula">P(|11⟩) → 1.000 after 1 Grover iteration</div></div><div class="algo-footer"><span style="font-size:0.8rem;color:var(--text-muted)">H, X, CZ</span><a href="simulator.html?preset=grover" class="btn btn-primary btn-sm">Launch →</a></div></div>
+        <div class="algo-card"><div><div class="algo-header"><span class="badge badge-emerald">Deterministic Speedup</span><span class="algo-complexity">1 query (vs 2 classical)</span></div><h3 class="algo-title">Deutsch's Algorithm</h3><p class="algo-desc">Determines if f(x) is constant or balanced with 1 quantum query using phase kickback. The first provable quantum computational speedup.</p><div class="algo-formula">q[0]=|0⟩→constant · q[0]=|1⟩→balanced</div></div><div class="algo-footer"><span style="font-size:0.8rem;color:var(--text-muted)">H, X, CX</span><a href="simulator.html?preset=deutsch" class="btn btn-primary btn-sm">Launch →</a></div></div>
+      </div>
+
+      <div class="cta-banner">
+        <h2 class="cta-banner-title">Ready to build quantum circuits?</h2>
+        <p class="cta-banner-desc">Jump into the Quantum Studio and assemble custom circuits with live statevector calculations, Bloch sphere visualization, and instant code export.</p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+          <a href="simulator.html" class="btn-glow" style="font-size:1rem;padding:13px 32px">⚡ Open Quantum Studio</a>
+          <a href="algorithms.html" class="btn-ghost">View All Algorithms →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <span style="font-weight:800;font-size:1.2rem;color:var(--text-primary);letter-spacing:-0.02em">Qflux</span>
+        <div style="font-size:0.82rem;color:var(--text-muted);margin-top:5px">© 2026 Qflux Project · Full-Featured Quantum Circuit Simulator</div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Overview</a></li><li><a href="simulator.html">Studio</a></li>
+        <li><a href="algorithms.html">Algorithms</a></li><li><a href="docs.html">Docs</a></li>
+        <li><a href="https://github.com" target="_blank" rel="noopener">GitHub ↗</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="js/quantum-engine.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

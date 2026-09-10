@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Studio — Qflux Simulator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .studio-header {
+      padding: 30px 0 20px;
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: rgba(15, 23, 42, 0.97);
+      border: 1px solid var(--accent-cyan);
+      color: var(--text-primary);
+      padding: 12px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(56, 189, 248, 0.15);
+      display: none;
+      z-index: 1000;
+      animation: fadeIn 0.2s ease;
+      max-width: 340px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Pending control qubit highlight */
+    .slot.pending-control {
+      border-color: var(--accent-amber) !important;
+      border-style: solid !important;
+      background: rgba(245, 158, 11, 0.18) !important;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+      animation: pulseCtrl 1s ease-in-out infinite;
+    }
+
+    @keyframes pulseCtrl {
+
+      0%,
+      100% {
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 18px rgba(245, 158, 11, 0.65);
+      }
+    }
+
+    /* Shots histogram styles */
+    .shots-histogram {
+      margin-top: 16px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .shots-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .shots-count-badge {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: var(--accent-cyan);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+    }
+
+    .shots-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .shots-bar-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+
+    .shots-bar-label {
+      width: 52px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .shots-bar-track {
+      flex: 1;
+      height: 20px;
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .shots-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6366f1, #38bdf8);
+      border-radius: 4px;
+      transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .shots-bar-stats {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: 56px;
+      flex-shrink: 0;
+    }
+
+    .shots-count {
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .shots-pct {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+    }
+
+    /* Step numbers on empty slots */
+    .slot:not(.has-gate)[data-step-label]::after {
+      content: attr(data-step-label);
+      position: absolute;
+      bottom: 2px;
+      right: 4px;
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      opacity: 0.4;
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Global Header -->
+  <header>
+    <div class="container-wide nav-wrapper">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">Qflux</span>
+        <span class="brand-tagline">Quantum Circuit Simulator</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="simulator.html" class="active">Simulator Studio</a></li>
+          <li><a href="algorithms.html">Algorithms Lab</a></li>
+          <li><a href="docs.html">Documentation</a></li>
+          <li><a href="https://github.com" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">GitHub</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Studio Header -->
+  <div class="container-wide studio-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <div class="badge badge-indigo">Interactive Workbench</div>
+        <h1 style="font-size: 1.8rem; margin-top: 8px;">Quantum Circuit Studio</h1>
+        <p style="color: var(--text-secondary); font-size: 0.92rem;">
+          Assemble quantum circuits, calculate complex statevectors in real time, and inspect 3D Bloch sphere
+          projections.
+        </p>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Presets:</span>
+        <select id="presetSelect" class="btn btn-secondary btn-sm"
+          style="background: var(--bg-surface-elevated); color: var(--text-primary); cursor: pointer;">
+          <option value="bell">Bell State (|Φ⁺⟩)</option>
+          <option value="ghz">GHZ 3-Qubit Entanglement</option>
+          <option value="superposition">Equal Superposition (|+++⟩)</option>
+          <option value="teleportation">Quantum Teleportation</option>
+          <option value="grover">Grover's Search (2-Qubit)</option>
+          <option value="deutsch">Deutsch's Algorithm</option>
+          <option value="blank">Blank Circuit</option>
+        </select>
+        <button id="clearCircuitBtn" class="btn btn-secondary btn-sm" style="color: var(--accent-rose);">Reset</button>
+        <button id="shareBtn" class="btn btn-secondary btn-sm" title="Share circuit via URL">🔗 Share</button>
+        <button id="exportJsonBtn" class="btn btn-secondary btn-sm" title="Save circuit as .qflux.json">💾 Save</button>
+        <button id="importJsonBtn" class="btn btn-secondary btn-sm" title="Load circuit from .qflux.json">📂
+          Load</button>
+        <input type="file" id="jsonFileInput" accept=".json,.qflux.json" style="display: none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Studio Main Layout -->
+  <main class="container-wide">
+    <div class="studio-layout">
+
+      <!-- Left Column: Circuit Editor & Controls -->
+      <div class="studio-card">
+
+        <!-- Palette Toolbar -->
+        <div class="studio-toolbar">
+          <div class="palette-group">
+            <span class="palette-title">Single Qubit:</span>
+            <button class="gate-btn active gate-H" data-gate="H" title="Hadamard (Superposition)">H</button>
+            <button class="gate-btn gate-X" data-gate="X" title="Pauli-X (NOT)">X</button>
+            <button class="gate-btn gate-Y" data-gate="Y" title="Pauli-Y">Y</button>
+            <button class="gate-btn gate-Z" data-gate="Z" title="Pauli-Z (Phase)">Z</button>
+            <button class="gate-btn gate-S" data-gate="S" title="S Phase Gate (π/2)">S</button>
+            <button class="gate-btn gate-T" data-gate="T" title="T Phase Gate (π/4)">T</button>
+          </div>
+
+          <div class="palette-group">
+            <span class="palette-title">Multi-Qubit:</span>
+            <button class="gate-btn gate-CX" data-gate="CX"
+              title="Controlled-NOT: Click control wire, then target">CX</button>
+            <button class="gate-btn gate-CZ" data-gate="CZ"
+              title="Controlled-Z: Click control wire, then target">CZ</button>
+          </div>
+
+          <div class="palette-group">
+            <span class="palette-title">Rotations:</span>
+            <button class="gate-btn gate-Rx" data-gate="Rx" title="Rotation Rx(θ)">Rx</button>
+            <button class="gate-btn gate-Ry" data-gate="Ry" title="Rotation Ry(θ)">Ry</button>
+            <button class="gate-btn gate-Rz" data-gate="Rz" title="Rotation Rz(θ)">Rz</button>
+          </div>
+
+          <div class="palette-group">
+            <span class="palette-title">Measure:</span>
+            <button class="gate-btn gate-M" data-gate="M"
+              title="Measurement — Collapses qubit to basis state">M</button>
+          </div>
+
+          <div class="palette-group">
+            <span class="palette-title">Grid:</span>
+            <button id="addQubitBtn" class="btn btn-secondary btn-sm" title="Add Qubit wire (max 6)">+Q</button>
+            <button id="removeQubitBtn" class="btn btn-secondary btn-sm" title="Remove Qubit wire">-Q</button>
+            <button id="addStepBtn" class="btn btn-secondary btn-sm" title="Add Step column (max 12)">+Step</button>
+            <button id="removeStepBtn" class="btn btn-secondary btn-sm" title="Remove Step column">-Step</button>
+          </div>
+
+          <div class="palette-group">
+            <span class="palette-title">History:</span>
+            <button id="undoBtn" class="btn btn-secondary btn-sm" title="Undo (Ctrl+Z)"
+              onclick="window.QfluxApp && window.QfluxApp.undo()">↩ Undo</button>
+            <button id="redoBtn" class="btn btn-secondary btn-sm" title="Redo (Ctrl+Y)"
+              onclick="window.QfluxApp && window.QfluxApp.redo()">↪ Redo</button>
+          </div>
+        </div>
+
+        <!-- Transport Playback & Stepper Bar -->
+        <div class="transport-bar">
+          <div class="transport-controls">
+            <button id="btnStepReset" class="transport-btn" title="Reset to Step 0">⏮</button>
+            <button id="btnStepPrev" class="transport-btn" title="Step Backward">◀</button>
+            <button id="btnPlayPause" class="transport-btn" title="Play / Pause State Evolution">▶</button>
+            <button id="btnStepNext" class="transport-btn" title="Step Forward">▶</button>
+            <button id="btnStepEnd" class="transport-btn" title="Jump to End (Full Circuit)">⏭</button>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Step:</span>
+            <span id="stepIndicatorBadge" class="step-indicator-badge">Full Circuit</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <label style="font-size: 0.78rem; color: var(--text-muted);" for="playbackSpeedSelect">Speed:</label>
+            <select id="playbackSpeedSelect" class="btn btn-secondary btn-sm"
+              style="padding: 2px 6px; font-size: 0.76rem; background: var(--bg-surface-elevated); color: var(--text-primary);">
+              <option value="1200">0.5x</option>
+              <option value="700" selected>1.0x</option>
+              <option value="350">2.0x</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Circuit Wire Grid -->
+        <div class="circuit-board">
+          <svg id="circuitSvgOverlay" class="circuit-svg-overlay"></svg>
+          <div class="circuit-grid" id="circuitGrid">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+
+        <!-- Circuit Stats Bar -->
+        <div
+          style="background: var(--bg-deep); border-top: 1px solid var(--border-subtle); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; gap: 20px; color: var(--text-secondary); flex-wrap: wrap;">
+            <div>Gates: <strong id="statGateCount" style="color: var(--accent-cyan);">0</strong></div>
+            <div>Depth: <strong id="statCircuitDepth" style="color: var(--accent-cyan);">0</strong></div>
+            <div>Hilbert Space: <strong id="statHilbertSpace" style="color: var(--accent-emerald);">2¹ = 2</strong>
+            </div>
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.78rem;">
+            Left-click: place gate &nbsp;|&nbsp; Right-click: remove gate &nbsp;|&nbsp; Ctrl+Z: undo
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Multi-Tab Quantum State Inspector -->
+      <div class="studio-card">
+
+        <!-- Tabs Header -->
+        <div class="tabs-header">
+          <button class="tab-btn active" data-tab="tab-prob">Probabilities</button>
+          <button class="tab-btn" data-tab="tab-state">Statevector</button>
+          <button class="tab-btn" data-tab="tab-bloch">Bloch Sphere</button>
+          <button class="tab-btn" data-tab="tab-export">Code Export</button>
+        </div>
+
+        <!-- Tab 1: Probabilities & Measurement Shots -->
+        <div id="tab-prob" class="tab-content active">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="font-size: 0.95rem;">Basis State Probabilities</h4>
+            <button id="sampleShotsBtn" class="btn btn-emerald btn-sm">🎲 Sample 1024 Shots</button>
+          </div>
+
+          <div id="probList">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <div id="shotsOutput"></div>
+        </div>
+
+        <!-- Tab 2: Full Statevector Table -->
+        <div id="tab-state" class="tab-content">
+          <div style="margin-bottom: 14px;">
+            <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">
+              Dirac Ket Notation:</div>
+            <div id="stateKetDisplay"
+              style="font-family: var(--font-mono); font-size: 0.95rem; color: var(--accent-cyan); background: var(--bg-deep); padding: 10px; border-radius: var(--radius-sm); margin-top: 6px; border: 1px solid var(--border-subtle); overflow-x: auto;">
+              |ψ⟩ = 1.000 |000⟩
+            </div>
+          </div>
+
+          <div style="max-height: 280px; overflow-y: auto;">
+            <table class="state-table">
+              <thead>
+                <tr>
+                  <th>State</th>
+                  <th>Complex Amplitude</th>
+                  <th>Probability</th>
+                  <th>Phase</th>
+                </tr>
+              </thead>
+              <tbody id="statevectorTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Interactive 3D Bloch Sphere -->
+        <div id="tab-bloch" class="tab-content">
+          <div class="bloch-container">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+              <span style="font-size: 0.85rem; color: var(--text-secondary);">Select Qubit:</span>
+              <div id="blochQubitSelector" class="bloch-qubit-selector"></div>
+            </div>
+
+            <div class="bloch-canvas-wrap">
+              <canvas id="blochCanvas" width="280" height="280"></canvas>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">
+              Drag with mouse to rotate the Bloch sphere in 3D
+            </div>
+
+            <div class="bloch-stats">
+              <div class="stat-pill">
+                <div class="stat-pill-val" id="blochTheta">0°</div>
+                <div class="stat-pill-label">Polar (θ)</div>
+              </div>
+              <div class="stat-pill">
+                <div class="stat-pill-val" id="blochPhi">0°</div>
+                <div class="stat-pill-label">Azimuth (φ)</div>
+              </div>
+              <div class="stat-pill">
+                <div class="stat-pill-val" id="blochPurity">100%</div>
+                <div class="stat-pill-label">Purity (r)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: OpenQASM and Python Qiskit Export -->
+        <div id="tab-export" class="tab-content">
+          <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">OpenQASM 2.0</span>
+              <button class="btn btn-secondary btn-sm btn-copy" data-copy-target="qasmCodeOutput">Copy QASM</button>
+            </div>
+            <div class="code-wrap">
+              <pre id="qasmCodeOutput" style="color: #a5b4fc; font-size: 0.84rem;"></pre>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">Python (Qiskit)</span>
+              <button class="btn btn-secondary btn-sm btn-copy" data-copy-target="qiskitCodeOutput">Copy Python</button>
+            </div>
+            <div class="code-wrap">
+              <pre id="qiskitCodeOutput" style="color: #67e8f9; font-size: 0.84rem;"></pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Angle Picker Modal for Rotation Gates -->
+  <div id="angleModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; color: var(--text-primary);">Configure Rotation Gate Angle</h3>
+        <button id="closeAngleModal" class="btn btn-secondary btn-sm" style="padding: 2px 8px;">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px;">
+          Select or enter the rotation angle θ for the gate:
+        </p>
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm preset-angle-btn" data-angle="0.785398">π/4 (45°)</button>
+          <button class="btn btn-secondary btn-sm preset-angle-btn" data-angle="1.570796">π/2 (90°)</button>
+          <button class="btn btn-secondary btn-sm preset-angle-btn" data-angle="3.141593">π (180°)</button>
+          <button class="btn btn-secondary btn-sm preset-angle-btn" data-angle="4.712389">3π/2 (270°)</button>
+        </div>
+        <div>
+          <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Custom Angle
+            (Radians or fraction of π):</label>
+          <input type="text" id="customAngleInput" value="1.5708"
+            style="width: 100%; background: var(--bg-deep); border: 1px solid var(--border-subtle); color: var(--text-primary); padding: 8px 12px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.9rem;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelAngleModal" class="btn btn-secondary btn-sm">Cancel</button>
+        <button id="applyAngleModal" class="btn btn-primary btn-sm">Apply & Place Gate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share Modal -->
+  <div id="shareModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; color: var(--text-primary);">Share Circuit</h3>
+        <button id="closeShareModal" class="btn btn-secondary btn-sm" style="padding: 2px 8px;">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 12px;">
+          Anyone with this link can load and simulate your exact quantum circuit:
+        </p>
+        <div
+          style="background: var(--bg-deep); border: 1px solid var(--border-subtle); padding: 10px; border-radius: var(--radius-sm); word-break: break-all; font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent-cyan); max-height: 120px; overflow-y: auto;"
+          id="shareUrlDisplay">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="copyShareUrlBtn" class="btn btn-primary btn-sm">Copy Share Link</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div id="toastNotification" class="toast-msg"></div>
+
+  <!-- Global Footer -->
+  <footer>
+    <div class="container-wide footer-inner">
+      <div>
+        <span style="font-weight: 700; font-size: 1.1rem; color: var(--text-primary);">Qflux Quantum Studio</span>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
+          High-performance quantum circuit simulation & statevector analysis in modern browsers.
+        </div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Overview</a></li>
+        <li><a href="simulator.html">Studio</a></li>
+        <li><a href="algorithms.html">Algorithms</a></li>
+        <li><a href="docs.html">Docs & Gate Math</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/quantum-engine.js"></script>
+  <script src="js/bloch-sphere.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

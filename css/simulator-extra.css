@@ -1,0 +1,249 @@
+﻿/* ========================================================================
+   Qflux Simulator — Extra Component Styles
+   Transport bar, modals, gate matrix tooltip, rotation gate buttons
+   ======================================================================== */
+
+/* ── Transport / Playback Bar ──────────────────────────────── */
+.transport-bar {
+  background: rgba(7, 9, 14, 0.98);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.transport-controls {
+  display: flex;
+  gap: 4px;
+}
+.transport-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.transport-btn:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.transport-btn.active {
+  background: rgba(99,102,241,0.2);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  box-shadow: 0 0 10px rgba(99,102,241,0.3);
+}
+.step-indicator-badge {
+  background: rgba(99,102,241,0.15);
+  border: 1px solid rgba(99,102,241,0.3);
+  color: var(--accent-cyan);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  min-width: 80px;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+/* Active step highlight on slots */
+.slot.step-active-highlight {
+  border-color: rgba(99,102,241,0.6) !important;
+  border-style: solid !important;
+  background: rgba(99,102,241,0.1) !important;
+  box-shadow: 0 0 14px rgba(99,102,241,0.35) !important;
+}
+.qubit-row.step-applied .qubit-wire-line {
+  background: linear-gradient(90deg, #38bdf8, #6366f1);
+  box-shadow: 0 0 6px rgba(56,189,248,0.4);
+  transition: background 0.3s ease;
+}
+
+/* ── Rotation Gate Buttons ─────────────────────────────────── */
+.gate-Rx { border-color: #f59e0b; color: #fcd34d; }
+.gate-Ry { border-color: #10b981; color: #6ee7b7; }
+.gate-Rz { border-color: #ec4899; color: #f9a8d4; }
+
+/* ── Modals ─────────────────────────────────────────────────── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+.modal-backdrop.open {
+  display: flex;
+  animation: modalFadeIn 0.18s ease;
+}
+@keyframes modalFadeIn {
+  from { opacity:0; } to { opacity:1; }
+}
+.modal-box {
+  background: var(--bg-surface);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 14px;
+  padding: 0;
+  width: min(480px, 95vw);
+  box-shadow: 0 30px 70px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(99,102,241,0.1);
+  animation: modalSlide 0.2s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes modalSlide {
+  from { transform: translateY(18px) scale(0.97); opacity:0; }
+  to { transform: translateY(0) scale(1); opacity:1; }
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.modal-body {
+  padding: 20px 22px;
+}
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-deep);
+  border-radius: 0 0 14px 14px;
+}
+
+/* ── Gate Matrix Tooltip ───────────────────────────────────── */
+.gate-matrix-tooltip {
+  position: fixed;
+  z-index: 400;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px) scale(0.97);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.gate-matrix-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.gate-matrix-box {
+  background: rgba(12, 16, 23, 0.97);
+  border: 1px solid rgba(99,102,241,0.4);
+  border-radius: 10px;
+  padding: 14px 16px;
+  min-width: 220px;
+  max-width: 280px;
+  box-shadow: 0 16px 40px -6px rgba(0,0,0,0.8), 0 0 0 1px rgba(99,102,241,0.08);
+  backdrop-filter: blur(16px);
+}
+.gate-matrix-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-cyan);
+  margin-bottom: 10px;
+}
+.gate-matrix-table {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  border-collapse: collapse;
+  width: 100%;
+}
+.gate-matrix-table td {
+  padding: 3px 8px;
+  text-align: center;
+  border: 1px solid rgba(30,41,59,0.8);
+  color: #a5b4fc;
+}
+.gate-matrix-table td.nonzero {
+  color: #38bdf8;
+  font-weight: 700;
+}
+.gate-matrix-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* ── Keyboard Shortcuts Panel ──────────────────────────────── */
+.shortcuts-panel {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  background: rgba(12, 16, 23, 0.97);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px 18px;
+  width: 260px;
+  z-index: 300;
+  display: none;
+  box-shadow: 0 16px 40px -6px rgba(0,0,0,0.7);
+  backdrop-filter: blur(16px);
+}
+.shortcuts-panel.visible { display: block; animation: modalFadeIn 0.15s ease; }
+.shortcuts-panel-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+}
+.shortcut-key {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--accent-cyan);
+}
+.shortcut-label { color: var(--text-secondary); }
+
+/* ── Help FAB ──────────────────────────────────────────────── */
+#helpFab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(99,102,241,0.4);
+  z-index: 350;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#helpFab:hover {
+  transform: scale(1.12);
+  box-shadow: 0 8px 28px rgba(99,102,241,0.6);
+}

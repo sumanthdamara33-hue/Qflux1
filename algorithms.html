@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algorithms Lab — Qflux Quantum Suite</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Global Header -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="index.html" class="brand">
+        <div class="brand-icon">⚡</div>
+        <span class="brand-name">Qflux</span>
+        <span class="brand-tagline">Quantum Circuit Simulator</span>
+      </a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Overview</a></li>
+          <li><a href="simulator.html">Simulator Studio</a></li>
+          <li><a href="algorithms.html" class="active">Algorithms Lab</a></li>
+          <li><a href="docs.html">Documentation</a></li>
+          <li><a href="simulator.html" class="btn btn-primary btn-sm">Launch Studio</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <main class="container" style="padding: 60px 24px;">
+    <div class="section-header">
+      <div class="section-tag">Interactive Reference & Protocols</div>
+      <h1 class="section-title">Quantum Algorithms Laboratory</h1>
+      <p class="section-subtitle">
+        Study fundamental quantum computing algorithms. Each protocol is accompanied by theoretical analysis, circuit architecture, and direct pre-configured loading into the Quantum Studio.
+      </p>
+    </div>
+
+    <!-- Algorithm Cards Grid -->
+    <div class="algo-grid">
+
+      <!-- Card 1: Bell State -->
+      <div class="algo-card">
+        <div>
+          <div class="algo-header">
+            <span class="badge badge-indigo">Foundational Entanglement</span>
+            <span class="algo-complexity">Depth: 2 · Qubits: 2</span>
+          </div>
+          <h2 class="algo-title">Bell State (|Φ⁺⟩) Creation</h2>
+          <p class="algo-desc">
+            The canonical demonstration of quantum entanglement. Applying a Hadamard gate on qubit 0 generates equal superposition, and a subsequent Controlled-NOT (CNOT) establishes maximal non-local correlation between the qubits.
+          </p>
+          <div style="background: var(--bg-deep); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <code style="color: var(--accent-cyan); font-size: 0.88rem;">|Φ⁺⟩ = (|00⟩ + |11⟩) / √2</code>
+            <div style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">Zero probability of measuring |01⟩ or |10⟩.</div>
+          </div>
+        </div>
+        <div class="algo-footer">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Key Gates: H, CX</span>
+          <a href="simulator.html?preset=bell" class="btn btn-primary btn-sm">Open in Studio →</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Quantum Teleportation -->
+      <div class="algo-card">
+        <div>
+          <div class="algo-header">
+            <span class="badge badge-emerald">Quantum Communication</span>
+            <span class="algo-complexity">Depth: 7 · Qubits: 3</span>
+          </div>
+          <h2 class="algo-title">Quantum Teleportation Protocol</h2>
+          <p class="algo-desc">
+            Transfers an arbitrary quantum state from qubit 0 to qubit 2 without transmitting the physical particle itself. Exploits an entangled Bell pair between sender and receiver, coupled with Bell measurement and feedforward corrections.
+          </p>
+          <div style="background: var(--bg-deep); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <code style="color: var(--accent-cyan); font-size: 0.88rem;">|ψ⟩ = α|0⟩ + β|1⟩  ⟶  q[2] = α|0⟩ + β|1⟩</code>
+            <div style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">Reconstructs exact phase and amplitude via CX and CZ gates.</div>
+          </div>
+        </div>
+        <div class="algo-footer">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Key Gates: H, CX, CZ, X</span>
+          <a href="simulator.html?preset=teleportation" class="btn btn-primary btn-sm">Open in Studio →</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Grover's Search -->
+      <div class="algo-card">
+        <div>
+          <div class="algo-header">
+            <span class="badge badge-indigo">Quantum Amplitude Amplification</span>
+            <span class="algo-complexity">Speedup: O(√N) vs O(N)</span>
+          </div>
+          <h2 class="algo-title">Grover's Search Algorithm (2-Qubit)</h2>
+          <p class="algo-desc">
+            Searches an unstructured 4-element database for target state |11⟩. Combines an oracle that phase-inverts the marked state with a diffusion operator (inversion about the mean) to boost the target probability to 100% in a single iteration.
+          </p>
+          <div style="background: var(--bg-deep); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <code style="color: var(--accent-cyan); font-size: 0.88rem;">Oracle: CZ · Diffusion: H - X - CZ - X - H</code>
+            <div style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">Constructive interference amplifies amplitude of |11⟩.</div>
+          </div>
+        </div>
+        <div class="algo-footer">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Key Gates: H, X, CZ</span>
+          <a href="simulator.html?preset=grover" class="btn btn-primary btn-sm">Open in Studio →</a>
+        </div>
+      </div>
+
+      <!-- Card 4: Deutsch-Jozsa -->
+      <div class="algo-card">
+        <div>
+          <div class="algo-header">
+            <span class="badge badge-emerald">Deterministic Speedup</span>
+            <span class="algo-complexity">Queries: 1 (Quantum) vs 2 (Classical)</span>
+          </div>
+          <h2 class="algo-title">Deutsch's Algorithm</h2>
+          <p class="algo-desc">
+            Determines whether a single-bit boolean function f(x) is constant (f(0) = f(1)) or balanced (f(0) ≠ f(1)) with exactly 1 query, using quantum phase kickback to evaluate all inputs simultaneously.
+          </p>
+          <div style="background: var(--bg-deep); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <code style="color: var(--accent-cyan); font-size: 0.88rem;">q[0] = 0 ⟹ Constant · q[0] = 1 ⟹ Balanced</code>
+            <div style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">Phase kickback transfers function properties to control qubit.</div>
+          </div>
+        </div>
+        <div class="algo-footer">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Key Gates: H, X, CX</span>
+          <a href="simulator.html?preset=deutsch" class="btn btn-primary btn-sm">Open in Studio →</a>
+        </div>
+      </div>
+
+      <!-- Card 5: GHZ Entanglement -->
+      <div class="algo-card">
+        <div>
+          <div class="algo-header">
+            <span class="badge badge-indigo">Multi-Particle Non-Locality</span>
+            <span class="algo-complexity">Depth: 3 · Qubits: 3</span>
+          </div>
+          <h2 class="algo-title">GHZ State Entanglement</h2>
+          <p class="algo-desc">
+            The Greenberger–Horne–Zeilinger state is a 3-qubit maximally entangled state. Used in quantum secret sharing and fundamental tests of quantum non-locality against local hidden variable theories.
+          </p>
+          <div style="background: var(--bg-deep); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <code style="color: var(--accent-cyan); font-size: 0.88rem;">|GHZ⟩ = (|000⟩ + |111⟩) / √2</code>
+            <div style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">Correlated measurement collapses all 3 qubits synchronously.</div>
+          </div>
+        </div>
+        <div class="algo-footer">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Key Gates: H, CX</span>
+          <a href="simulator.html?preset=ghz" class="btn btn-primary btn-sm">Open in Studio →</a>
+        </div>
+      </div>
+
+      <!-- Card 6: Equal Superposition -->
+      <div class="algo-card">
+        <div>
+          <div class="algo-header">
+            <span class="badge badge-emerald">Quantum Randomness</span>
+            <span class="algo-complexity">States: 2ᴺ Uniform</span>
+          </div>
+          <h2 class="algo-title">Equal Superposition (|+++⟩)</h2>
+          <p class="algo-desc">
+            Applies parallel Hadamard transformations across all qubit registers to construct an unbiased superposition over the entire 2ᴺ dimensional state space. Forms the initial preparatory state for quantum search and phase estimation.
+          </p>
+          <div style="background: var(--bg-deep); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 20px;">
+            <code style="color: var(--accent-cyan); font-size: 0.88rem;">|ψ⟩ = 1/√(2ᴺ) ∑ |x⟩  (Equal 12.5% on 3 qubits)</code>
+            <div style="color: var(--text-muted); font-size: 0.78rem; margin-top: 4px;">Hardware-level true quantum randomness upon measurement.</div>
+          </div>
+        </div>
+        <div class="algo-footer">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">Key Gates: H</span>
+          <a href="simulator.html?preset=superposition" class="btn btn-primary btn-sm">Open in Studio →</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <span style="font-weight: 700; font-size: 1.1rem; color: var(--text-primary);">Qflux Algorithms Lab</span>
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
+          Interactive quantum algorithm educational playground and testing ground.
+        </div>
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Overview</a></li>
+        <li><a href="simulator.html">Studio</a></li>
+        <li><a href="algorithms.html">Algorithms</a></li>
+        <li><a href="docs.html">Documentation</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>
