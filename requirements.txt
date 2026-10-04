@@ -1,0 +1,5 @@
+# Vercel Python 3.14 serverless dependencies.
+fastapi>=0.115.6
+numpy>=2.3.0
+pydantic>=2.12.5
+uvicorn>=0.34.0

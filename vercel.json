@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm install --prefix v2/frontend && npm run build --prefix v2/frontend",
+  "outputDirectory": "v2/frontend/dist",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index.py" }
+  ]
+}
